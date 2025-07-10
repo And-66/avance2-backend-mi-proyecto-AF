@@ -8,7 +8,7 @@ package com.mycompany.proyectofinal.fidebank.af;
  *
  * @author XPC
  */
-public class ProyectoFinalFideBankAF {
+public class MainFideBank {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
