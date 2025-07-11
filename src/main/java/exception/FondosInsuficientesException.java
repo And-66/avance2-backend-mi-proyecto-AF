@@ -8,6 +8,8 @@ package exception;
  *
  * @author XPC
  */
-public class FondosInsuficientesException {
-    
+public class FondosInsuficientesException extends Exception {
+    public FondosInsuficientesException(String message) {
+        super(message);
+    }
 }

@@ -8,6 +8,8 @@ package exception;
  *
  * @author XPC
  */
-public class AutenticacionException {
-    
+public class AutenticacionException extends Exception {
+    public AutenticacionException(String message) {
+        super(message);
+    }
 }
