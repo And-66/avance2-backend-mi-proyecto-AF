@@ -4,17 +4,22 @@
  */
 package model;
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.regex.Pattern;
 /**
  *
  * @author XPC
  */
 public class Cliente implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int idCliente;
     private String nombre;
     private String apellido;
     private String direccion;
     private String telefono;
     private String email;
+    
+    private static final Pattern EMAIL_PATTERN =Pattern.compile("^\\S+@\\S+\\.\\S+$");
 
     public Cliente(int idCliente, String nombre, String apellido, String direccion, String telefono, String email) {
         this.idCliente = idCliente;
@@ -73,7 +78,63 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
-    public void registrarCliente() { }
-    public void actualizarDatos() { }
-    public String obtenerInformacion() { return null; }
+    
+    
+    
+    
+    public void registrarCliente() {
+        validarCampos();
+    }
+    
+    public void actualizarDatos() {
+        validarCampos();
+    }
+    
+    public String obtenerInformacion() { 
+        return String.format(
+            "Cliente ID: %d\nNombre: %s %s\nDirección: %s\nTeléfono: %s\nEmail: %s",
+            idCliente, nombre, apellido, direccion, telefono, email
+        );
+    }
+    
+        private void validarCampos() {
+        if (nombre == null || nombre.isBlank()) {
+            throw new IllegalArgumentException("El campo del nombre es obligatorio");
+        }
+        if (apellido == null || apellido.isBlank()) {
+            throw new IllegalArgumentException("El campo del apellido es obligatorio");
+        }
+        if (direccion == null || direccion.isBlank()) {
+            throw new IllegalArgumentException("El campo de dirección es obligatorio");
+        }
+        if (telefono == null || telefono.isBlank()) {
+            throw new IllegalArgumentException("El campo de teléfono es obligatorio");
+        }
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("El campo de email es obligatorio");
+        }
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            throw new IllegalArgumentException("Formato de email incorrecto");
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Cliente cliente = (Cliente) o;
+        return idCliente == cliente.idCliente;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idCliente);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s (ID %d)", nombre, apellido, idCliente);
+    }
+
 }
