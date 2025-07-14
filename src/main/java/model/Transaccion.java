@@ -15,6 +15,12 @@ public abstract class Transaccion implements Serializable {
     protected double monto;
     protected Date fecha;
     public String estado;
+    
+    
+    public abstract void ejecutar()throws Exception;
+    protected void registrar() { 
+    // Pendiente
+    }
 
     public int getIdTransaccion() {
         return idTransaccion;
@@ -56,11 +62,6 @@ public abstract class Transaccion implements Serializable {
         this.estado = estado;
     }
     
-   
-    public abstract void ejecutar()throws Exception;
-    protected void registrar() { 
-    // Pendiente
-    }
     public String obtenerDetalleTransaccion() { 
         return String.format(
             "ID: %d | Tipo: %s | Monto: %.2f | Fecha: %s | Estado: %s",
