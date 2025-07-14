@@ -9,5 +9,7 @@ package model;
  * @author XPC
  */
 public enum EnumTipo {
-    
+    RETIRO,
+    DEPOSITO,
+    TRANSFERENCIA   
 }
