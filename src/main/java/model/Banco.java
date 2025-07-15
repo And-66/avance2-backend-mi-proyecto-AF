@@ -35,6 +35,20 @@ public class Banco implements Serializable {
     public void actualizarCliente(Cliente clienteActualizado) {
         listaClientes.replaceAll(c -> c.getIdCliente() == clienteActualizado.getIdCliente() ? clienteActualizado : c);
     }
+    
+    public void actualizarCuenta(Cuenta cuentaActual) throws CuentaNoEncontradaException {
+        for (int i = 0; i < listaCuentas.size(); i++) {
+            if (listaCuentas.get(i).getNumCuenta().equals(cuentaActual.getNumCuenta())) {
+                listaCuentas.set(i, cuentaActual);
+                return;
+            }
+        }
+        throw new CuentaNoEncontradaException(
+            "No existe la cuenta: " + cuentaActual.getNumCuenta()
+        );
+    }
+    
+    
     public List<Cuenta> obtenerTodasCuentas() {
         return Collections.unmodifiableList(listaCuentas);
     }

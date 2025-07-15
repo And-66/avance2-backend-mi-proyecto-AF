@@ -10,19 +10,33 @@ import javax.swing.*;
  * @author XPC
  */
 public class VerificarNum extends InputVerifier {
-        @Override
+    @Override
     public boolean verify(JComponent input) {
-        try {
-            Double.parseDouble(((JTextField) input).getText());
+        String text = ((JTextField) input).getText().trim();
+        if (text.isEmpty()) {
             return true;
-        } catch (Exception e) {
+        }
+        try {
+            Double.parseDouble(text);
+            return true;
+        } catch (NumberFormatException e) {
             return false;
         }
     }
+
     @Override
     public boolean shouldYieldFocus(JComponent input) {
-        boolean ok = verify(input);
-        if (!ok) JOptionPane.showMessageDialog(input, "Valor numérico inválido");
-        return ok;
-    }    
+        boolean valid = verify(input);
+        String text = ((JTextField) input).getText().trim();
+        if (!text.isEmpty() && !valid) {
+            JOptionPane.showMessageDialog(
+                input,
+                "Ingrese un número válido",
+                "Validación Numérica",
+                JOptionPane.WARNING_MESSAGE
+            );
+        }
+        return true;
+    }
+ 
 }

@@ -17,7 +17,6 @@ public class BancoService {
     private Banco banco;
 
     public BancoService() {
-        // Intentar cargar; si falla, crear uno nuevo
         try {
             banco = (Banco) Serializacion.cargar(RUTA_DB);
         } catch (Exception e) {

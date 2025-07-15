@@ -15,10 +15,20 @@ public class VerificarPIN extends InputVerifier {
         String text = ((JTextField) input).getText();
         return text.matches("\\d{4}");
     }
+
     @Override
     public boolean shouldYieldFocus(JComponent input) {
-        boolean ok = verify(input);
-        if (!ok) JOptionPane.showMessageDialog(input, "PIN debe tener 4 dígitos");
-        return ok;
-    }   
+        boolean valid = verify(input);
+        String text = ((JTextField) input).getText();
+        if (!valid && !text.isBlank()) {
+            JOptionPane.showMessageDialog(
+                input,
+                "PIN debe tener exactamente 4 dígitos numéricos",
+                "Validación PIN",
+                JOptionPane.WARNING_MESSAGE
+            );
+        }
+        return true;
+    }
+
 }
