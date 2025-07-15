@@ -3,6 +3,13 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import model.Cliente;
+import model.Cuenta;
+import service.BancoService;
+import util.VerificarEmail;
+import util.VerificarNum;
+import util.VerificarPIN;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -14,22 +21,23 @@ import javax.swing.ImageIcon;
  * @author XPC
  */
 public class RegistroPanel extends javax.swing.JFrame {
-    
+    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RegistroPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public RegistroPanel() {
+    public RegistroPanel(BancoService bs) {
+        this.bs = bs;
         initComponents();
-                // Suponiendo que el JLabel se llama lblImagen.
-ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
-// Obtener la Imagen original
-Image image = icon.getImage();
-// Escalar la imagen a las dimensiones deseadas (ejemplo: 50 px x 50 px)
-Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-// Actualizar el icono del JLabel con la imagen escalada
-lblImagen.setIcon(new ImageIcon(scaledImage));
+        setLocationRelativeTo(null);
+        txtPIN.setInputVerifier(new util.VerificarPIN());
+        txtEmail.setInputVerifier(new util.VerificarEmail());
+        txtTelefono.setInputVerifier(new VerificarNum());
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        lblImagen.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
@@ -41,43 +49,52 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
+        lblPIN = new javax.swing.JLabel();
         btnRegistro = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         lblImagen = new javax.swing.JLabel();
-        lblMensaje = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        txtMonto1 = new javax.swing.JTextField();
-        txtMonto2 = new javax.swing.JTextField();
-        txtMonto3 = new javax.swing.JTextField();
-        txtMonto4 = new javax.swing.JTextField();
-        txtMonto5 = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        jLabel8 = new javax.swing.JLabel();
-        jPasswordField2 = new javax.swing.JPasswordField();
+        lblStatus = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
+        lblApellido = new javax.swing.JLabel();
+        lblDireccion = new javax.swing.JLabel();
+        lblTelefono = new javax.swing.JLabel();
+        lblEmail = new javax.swing.JLabel();
+        txtNombre = new javax.swing.JTextField();
+        txtApellido = new javax.swing.JTextField();
+        txtDireccion = new javax.swing.JTextField();
+        txtTelefono = new javax.swing.JTextField();
+        txtEmail = new javax.swing.JTextField();
+        txtPIN = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Registro de Clientes");
         setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Registro de Clientes");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblTitulo.setText("Registro de Clientes");
 
-        jLabel2.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel2.setText("PIN (4 digitos):");
+        lblPIN.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblPIN.setText("PIN (4 digitos):");
 
         btnRegistro.setBackground(new java.awt.Color(102, 153, 0));
         btnRegistro.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnRegistro.setText("Registro");
+        btnRegistro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistroActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setBackground(new java.awt.Color(102, 153, 0));
         btnCancelar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(102, 153, 0));
 
@@ -101,76 +118,53 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addGap(62, 62, 62))
         );
 
-        lblMensaje.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        lblMensaje.setForeground(new java.awt.Color(204, 0, 51));
-        lblMensaje.setText("Mensajes y errores aqui");
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(204, 0, 51));
 
-        jLabel3.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel3.setText("Nombre:");
+        lblNombre.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblNombre.setText("Nombre:");
 
-        jLabel4.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel4.setText("Apellidos:");
+        lblApellido.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblApellido.setText("Apellidos:");
 
-        jLabel5.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel5.setText("Dirección:");
+        lblDireccion.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblDireccion.setText("Dirección:");
 
-        jLabel6.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel6.setText("Teléfono:");
+        lblTelefono.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblTelefono.setText("Teléfono:");
 
-        jLabel7.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel7.setText("Email:");
+        lblEmail.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblEmail.setText("Email:");
 
-        txtMonto1.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        txtMonto1.setForeground(new java.awt.Color(204, 204, 204));
-        txtMonto1.setText("Digite el monto a retirar");
-        txtMonto1.addActionListener(new java.awt.event.ActionListener() {
+        txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMonto1ActionPerformed(evt);
+                txtNombreActionPerformed(evt);
             }
         });
 
-        txtMonto2.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        txtMonto2.setForeground(new java.awt.Color(204, 204, 204));
-        txtMonto2.setText("Digite el monto a retirar");
-        txtMonto2.addActionListener(new java.awt.event.ActionListener() {
+        txtApellido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMonto2ActionPerformed(evt);
+                txtApellidoActionPerformed(evt);
             }
         });
 
-        txtMonto3.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        txtMonto3.setForeground(new java.awt.Color(204, 204, 204));
-        txtMonto3.setText("Digite el monto a retirar");
-        txtMonto3.addActionListener(new java.awt.event.ActionListener() {
+        txtDireccion.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMonto3ActionPerformed(evt);
+                txtDireccionActionPerformed(evt);
             }
         });
 
-        txtMonto4.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        txtMonto4.setForeground(new java.awt.Color(204, 204, 204));
-        txtMonto4.setText("Digite el monto a retirar");
-        txtMonto4.addActionListener(new java.awt.event.ActionListener() {
+        txtTelefono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMonto4ActionPerformed(evt);
+                txtTelefonoActionPerformed(evt);
             }
         });
 
-        txtMonto5.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        txtMonto5.setForeground(new java.awt.Color(204, 204, 204));
-        txtMonto5.setText("Digite el monto a retirar");
-        txtMonto5.addActionListener(new java.awt.event.ActionListener() {
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMonto5ActionPerformed(evt);
+                txtEmailActionPerformed(evt);
             }
         });
-
-        jPasswordField1.setText("7854");
-
-        jLabel8.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel8.setText("Confirmar PIN (4 digitos):");
-
-        jPasswordField2.setText("7854");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -178,117 +172,189 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(130, 130, 130)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel3)
-                        .addGap(41, 41, 41)
-                        .addComponent(txtMonto1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel4)
-                        .addGap(31, 31, 31)
-                        .addComponent(txtMonto2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel5)
-                        .addGap(29, 29, 29)
-                        .addComponent(txtMonto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel6)
-                        .addGap(34, 34, 34)
-                        .addComponent(txtMonto4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel7)
-                        .addGap(59, 59, 59)
-                        .addComponent(txtMonto5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel2)
+                        .addGap(60, 60, 60)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblNombre)
+                            .addComponent(lblApellido)
+                            .addComponent(lblDireccion)
+                            .addComponent(lblTelefono)
+                            .addComponent(lblEmail)
+                            .addComponent(lblPIN))
                         .addGap(9, 9, 9)
-                        .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel8)
-                        .addGap(6, 6, 6)
-                        .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(110, 110, 110)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtDireccion, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtApellido, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtPIN))
+                        .addGap(70, 70, 70))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnRegistro)
                         .addGap(10, 10, 10)
-                        .addComponent(btnCancelar))
-                    .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCancelar)
+                        .addGap(93, 93, 93))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(130, 130, 130)
+                .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(260, 260, 260)
+                .addComponent(lblTitulo))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addComponent(jLabel1)
+                .addComponent(lblTitulo)
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(txtMonto1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblNombre)
+                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(txtMonto2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblApellido)
+                    .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(txtMonto3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblDireccion)
+                    .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(txtMonto4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblTelefono)
+                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel7)
-                    .addComponent(txtMonto5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblEmail)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jPasswordField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(lblPIN)
+                    .addComponent(txtPIN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnRegistro)
                     .addComponent(btnCancelar))
-                .addGap(14, 14, 14)
-                .addComponent(lblMensaje))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblStatus))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtMonto1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMonto1ActionPerformed
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMonto1ActionPerformed
+    }//GEN-LAST:event_txtNombreActionPerformed
 
-    private void txtMonto2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMonto2ActionPerformed
+    private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMonto2ActionPerformed
+    }//GEN-LAST:event_txtApellidoActionPerformed
 
-    private void txtMonto3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMonto3ActionPerformed
+    private void txtDireccionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDireccionActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMonto3ActionPerformed
+    }//GEN-LAST:event_txtDireccionActionPerformed
 
-    private void txtMonto4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMonto4ActionPerformed
+    private void txtTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefonoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMonto4ActionPerformed
+    }//GEN-LAST:event_txtTelefonoActionPerformed
 
-    private void txtMonto5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMonto5ActionPerformed
+    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMonto5ActionPerformed
+    }//GEN-LAST:event_txtEmailActionPerformed
+
+    private void btnRegistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroActionPerformed
+        lblStatus.setText("");
+        String nombre    = txtNombre.getText().trim();
+        String apellido  = txtApellido.getText().trim();
+        String direccion = txtDireccion.getText().trim();
+        String telefono  = txtTelefono.getText().trim();
+        String email     = txtEmail.getText().trim();
+        String pin       = new String(txtPIN.getPassword()).trim();
+
+        // Campos obligatorios
+        if (nombre.isEmpty()) {
+            lblStatus.setText("El nombre es obligatorio");
+            txtNombre.requestFocusInWindow();
+            return;
+        }
+        if (apellido.isEmpty()) {
+            lblStatus.setText("El apellido es obligatorio");
+            txtApellido.requestFocusInWindow();
+            return;
+        }
+        if (pin.isEmpty()) {
+            lblStatus.setText("El PIN es obligatorio");
+            txtPIN.requestFocusInWindow();
+            return;
+        }
+
+        VerificarPIN pinVer = (VerificarPIN) txtPIN.getInputVerifier();
+        if (!pinVer.verify(txtPIN)) {
+            pinVer.shouldYieldFocus(txtPIN);
+            return;
+        }
+        if (direccion.isEmpty()) {
+            lblStatus.setText("La dirección es obligatoria");
+            txtDireccion.requestFocusInWindow();
+            return;
+        }
+        if (telefono.isEmpty()) {
+            lblStatus.setText("El teléfono es obligatorio");
+            txtTelefono.requestFocusInWindow();
+            return;
+        }
+
+        VerificarNum numVer = (VerificarNum) txtTelefono.getInputVerifier();
+        if (!numVer.verify(txtTelefono)) {
+            numVer.shouldYieldFocus(txtTelefono);
+            return;
+        }
+        if (email.isEmpty()) {
+            lblStatus.setText("El email es obligatorio");
+            txtEmail.requestFocusInWindow();
+            return;
+        }
+
+        VerificarEmail emailVer = (VerificarEmail) txtEmail.getInputVerifier();
+        if (!emailVer.verify(txtEmail)) {
+            emailVer.shouldYieldFocus(txtEmail);
+            return;
+        }
+
+        try {
+            int id = bs.getBanco().getListaClientes().size() + 1;
+            Cliente cliente = new Cliente(
+                id, nombre, apellido,
+                direccion, telefono, email
+            );
+            cliente.registrarCliente();
+
+            String numCuenta = String.valueOf(System.currentTimeMillis());
+            Cuenta cuenta = new Cuenta(numCuenta, cliente, pin, 0.0);
+            bs.getBanco().abrirCuenta(cliente, cuenta);
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Registro exitoso. Tu cuenta es: " + numCuenta,
+                "Registro OK",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+            new MenuPanel(cuenta, bs).setVisible(true);
+            this.dispose();
+
+        } catch (Exception ex) {
+            lblStatus.setText("Error: " + ex.getMessage());
+        }
+
+    }//GEN-LAST:event_btnRegistroActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        new LoginPanel(bs).setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -312,29 +378,29 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new RegistroPanel().setVisible(true));
+        
+        
+        //java.awt.EventQueue.invokeLater(() -> new RegistroPanel().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnRegistro;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JPasswordField jPasswordField2;
+    private javax.swing.JLabel lblApellido;
+    private javax.swing.JLabel lblDireccion;
+    private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblImagen;
-    private javax.swing.JLabel lblMensaje;
-    private javax.swing.JTextField txtMonto1;
-    private javax.swing.JTextField txtMonto2;
-    private javax.swing.JTextField txtMonto3;
-    private javax.swing.JTextField txtMonto4;
-    private javax.swing.JTextField txtMonto5;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblPIN;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTelefono;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextField txtApellido;
+    private javax.swing.JTextField txtDireccion;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtNombre;
+    private javax.swing.JPasswordField txtPIN;
+    private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }

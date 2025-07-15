@@ -18,9 +18,7 @@ public class MainFideBank {
      */
     public static void main(String[] args) {
         BancoService bs = new BancoService();
-        Runtime.getRuntime()
-            .addShutdownHook(new Thread(bs::guardar));
-
+        Runtime.getRuntime().addShutdownHook(new Thread(bs::guardar));
         java.awt.EventQueue.invokeLater(() -> {
             new LoginPanel(bs).setVisible(true);
         });
