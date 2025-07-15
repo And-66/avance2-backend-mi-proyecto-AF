@@ -3,7 +3,8 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-
+import model.Cuenta;
+import service.BancoService;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,22 +15,22 @@ import javax.swing.ImageIcon;
  * @author XPC
  */
 public class MenuPanel extends javax.swing.JFrame {
-    
+    private Cuenta cuentaActual;
+    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public MenuPanel() {
+    public MenuPanel(Cuenta cuentaActual, BancoService bs) {
+        this.cuentaActual = cuentaActual;
+        this.bs = bs;
         initComponents();
-                // Suponiendo que el JLabel se llama lblImagen.
-ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
-// Obtener la Imagen original
-Image image = icon.getImage();
-// Escalar la imagen a las dimensiones deseadas (ejemplo: 50 px x 50 px)
-Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-// Actualizar el icono del JLabel con la imagen escalada
-lblImagen.setIcon(new ImageIcon(scaledImage));
+        setLocationRelativeTo(null);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        lblImagenFideBank.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
@@ -41,61 +42,94 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lblBienvenida = new javax.swing.JLabel();
+        lblSaldo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
+        btnRetiro = new javax.swing.JButton();
+        btnTransferencia = new javax.swing.JButton();
+        btnDeposito = new javax.swing.JButton();
+        btnHistorial = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
+        btnActualizar = new javax.swing.JButton();
+        btnComprobante = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        lblImagen = new javax.swing.JLabel();
-        lblMensaje = new javax.swing.JLabel();
+        lblImagenFideBank = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cajero Automatico");
         setResizable(false);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Bienvenido a FideBank Juan Vindas Porras!");
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel2.setText("Saldo Actual: $10.000");
-
-        jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jButton1.setBackground(new java.awt.Color(102, 153, 0));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setText("Retiro");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(102, 153, 0));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton2.setText("Transferencia");
+        lblBienvenida.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
-        jButton4.setBackground(new java.awt.Color(102, 153, 0));
-        jButton4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton4.setText("Depósito");
+        lblSaldo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
-        jButton5.setBackground(new java.awt.Color(102, 153, 0));
-        jButton5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton5.setText("Consulta de Historial");
+        jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton6.setBackground(new java.awt.Color(102, 153, 0));
-        jButton6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton6.setText("Salir");
-
-        jButton7.setBackground(new java.awt.Color(102, 153, 0));
-        jButton7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton7.setText("Actualizar Datos");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnRetiro.setBackground(new java.awt.Color(102, 153, 0));
+        btnRetiro.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnRetiro.setText("Retiro");
+        btnRetiro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnRetiroActionPerformed(evt);
+            }
+        });
+
+        btnTransferencia.setBackground(new java.awt.Color(102, 153, 0));
+        btnTransferencia.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnTransferencia.setText("Transferencia");
+        btnTransferencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTransferenciaActionPerformed(evt);
+            }
+        });
+
+        btnDeposito.setBackground(new java.awt.Color(102, 153, 0));
+        btnDeposito.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnDeposito.setText("Depósito");
+        btnDeposito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDepositoActionPerformed(evt);
+            }
+        });
+
+        btnHistorial.setBackground(new java.awt.Color(102, 153, 0));
+        btnHistorial.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnHistorial.setText("Consulta de Historial");
+        btnHistorial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHistorialActionPerformed(evt);
+            }
+        });
+
+        btnSalir.setBackground(new java.awt.Color(102, 153, 0));
+        btnSalir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
+
+        btnActualizar.setBackground(new java.awt.Color(102, 153, 0));
+        btnActualizar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnActualizar.setText("Actualizar Datos");
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarActionPerformed(evt);
+            }
+        });
+
+        btnComprobante.setBackground(new java.awt.Color(102, 153, 0));
+        btnComprobante.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnComprobante.setText("Comprobante");
+        btnComprobante.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnComprobanteActionPerformed(evt);
             }
         });
 
@@ -107,16 +141,17 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton5)
+                        .addComponent(btnRetiro)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7))
+                        .addComponent(btnTransferencia)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDeposito))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(btnHistorial)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jButton6))
+                        .addComponent(btnActualizar))
+                    .addComponent(btnComprobante)
+                    .addComponent(btnSalir))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -124,22 +159,23 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton4)
-                    .addComponent(jButton2))
+                    .addComponent(btnRetiro)
+                    .addComponent(btnDeposito)
+                    .addComponent(btnTransferencia))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton7))
-                .addGap(39, 39, 39)
-                .addComponent(jButton6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnHistorial)
+                    .addComponent(btnActualizar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnComprobante)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addComponent(btnSalir))
         );
 
         jPanel2.setBackground(new java.awt.Color(102, 153, 0));
 
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
-        lblImagen.setName("lblImagen"); // NOI18N
+        lblImagenFideBank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
+        lblImagenFideBank.setName("lblImagenFideBank"); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -147,20 +183,16 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblImagenFideBank, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(29, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(328, Short.MAX_VALUE)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblImagenFideBank, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20))
         );
-
-        lblMensaje.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        lblMensaje.setForeground(new java.awt.Color(204, 0, 51));
-        lblMensaje.setText("Mensajes y errores aqui");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -170,41 +202,83 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(lblBienvenida)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(100, 100, 100)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(lblSaldo))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jLabel1)
+                .addComponent(lblBienvenida)
                 .addGap(15, 15, 15)
-                .addComponent(jLabel2)
-                .addGap(15, 15, 15)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addComponent(lblMensaje))
+                .addComponent(lblSaldo)
+                .addGap(55, 55, 55)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnRetiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetiroActionPerformed
+        new RetiroPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_btnRetiroActionPerformed
+
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        new ActualizarDatosPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+
+        String nombre = cuentaActual.getCliente().getNombre();
+        String apellido = cuentaActual.getCliente().getApellido();
+        lblBienvenida.setText(
+            "Bienvenido a FideBank, " + nombre + " " + apellido
+        );
+
+        double balance = cuentaActual.getBalance();
+        lblSaldo.setText(
+            "Saldo Actual: ₡" + String.format("%,.2f", balance)
+        );
+    }//GEN-LAST:event_formWindowOpened
+
+    private void btnTransferenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferenciaActionPerformed
+        //new TransferenciaPanel(cuentaActual, bs).setVisible(true);
+        //this.dispose();
+
+    }//GEN-LAST:event_btnTransferenciaActionPerformed
+
+    private void btnDepositoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDepositoActionPerformed
+        new DepositoPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_btnDepositoActionPerformed
+
+    private void btnHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialActionPerformed
+        //new HistorialPanel(cuentaActual, bs).setVisible(true);
+        //this.dispose();
+
+    }//GEN-LAST:event_btnHistorialActionPerformed
+
+    private void btnComprobanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprobanteActionPerformed
+        //new ComprobantePanel(cuentaActual, bs).setVisible(true);
+        //this.dispose();
+
+    }//GEN-LAST:event_btnComprobanteActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        bs.guardar();
+        System.exit(0);
+
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -228,21 +302,21 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new MenuPanel().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new MenuPanel().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnComprobante;
+    private javax.swing.JButton btnDeposito;
+    private javax.swing.JButton btnHistorial;
+    private javax.swing.JButton btnRetiro;
+    private javax.swing.JButton btnSalir;
+    private javax.swing.JButton btnTransferencia;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lblImagen;
-    private javax.swing.JLabel lblMensaje;
+    private javax.swing.JLabel lblBienvenida;
+    private javax.swing.JLabel lblImagenFideBank;
+    private javax.swing.JLabel lblSaldo;
     // End of variables declaration//GEN-END:variables
 }
