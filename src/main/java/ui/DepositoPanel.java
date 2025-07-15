@@ -3,6 +3,10 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import model.Cuenta;
+import model.impl.Deposito;
+import service.BancoService;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -14,22 +18,23 @@ import javax.swing.ImageIcon;
  * @author XPC
  */
 public class DepositoPanel extends javax.swing.JFrame {
-    
+    private Cuenta cuentaActual;
+    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DepositoPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public DepositoPanel() {
+    public DepositoPanel(Cuenta cuentaActual, BancoService bs) {
+        this.cuentaActual = cuentaActual;
+        this.bs = bs;
         initComponents();
-                // Suponiendo que el JLabel se llama lblImagen.
-ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
-// Obtener la Imagen original
-Image image = icon.getImage();
-// Escalar la imagen a las dimensiones deseadas (ejemplo: 50 px x 50 px)
-Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-// Actualizar el icono del JLabel con la imagen escalada
-lblImagen.setIcon(new ImageIcon(scaledImage));
+        setLocationRelativeTo(null);
+        txtMonto.setInputVerifier(new util.VerificarNum());
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        lblImagen.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
@@ -41,30 +46,28 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtMontoDeposito = new javax.swing.JTextField();
+        lblTitulo = new javax.swing.JLabel();
+        lblMontoDepositar = new javax.swing.JLabel();
+        txtMonto = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         lblImagen = new javax.swing.JLabel();
-        lblMensaje = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
         btnConfirmar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Depósito de Fondos");
         setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Depósito de Fondos");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblTitulo.setText("Depósito de Fondos");
 
-        jLabel2.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        jLabel2.setText("Ingrese el monto a depositar:");
+        lblMontoDepositar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        lblMontoDepositar.setText("Ingrese el monto a depositar:");
 
-        txtMontoDeposito.setForeground(new java.awt.Color(204, 204, 204));
-        txtMontoDeposito.setText("Digite el monto a depositar");
-        txtMontoDeposito.addActionListener(new java.awt.event.ActionListener() {
+        txtMonto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtMontoDepositoActionPerformed(evt);
+                txtMontoActionPerformed(evt);
             }
         });
 
@@ -90,24 +93,24 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addGap(19, 19, 19))
         );
 
-        lblMensaje.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        lblMensaje.setForeground(new java.awt.Color(204, 0, 51));
-        lblMensaje.setText("Mensajes y errores aqui");
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(204, 0, 51));
 
         btnConfirmar.setBackground(new java.awt.Color(102, 153, 0));
         btnConfirmar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnConfirmar.setText("Confirmar");
+        btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setBackground(new java.awt.Color(102, 153, 0));
         btnCancelar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
-
-        jButton3.setBackground(new java.awt.Color(102, 153, 0));
-        jButton3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton3.setText("Comprobante");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnCancelarActionPerformed(evt);
             }
         });
 
@@ -117,55 +120,72 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(10, 10, 10)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
-                        .addComponent(jLabel1))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(108, 108, 108)
+                                .addComponent(lblTitulo))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblMontoDepositar)
+                                .addGap(4, 4, 4)
+                                .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(40, 40, 40)
+                                .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(4, 4, 4)
-                        .addComponent(txtMontoDeposito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addGap(97, 97, 97)
                         .addComponent(btnConfirmar)
                         .addGap(11, 11, 11)
-                        .addComponent(btnCancelar)
-                        .addGap(8, 8, 8)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
-                        .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(btnCancelar))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addComponent(jLabel1)
+                .addComponent(lblTitulo)
                 .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(txtMontoDeposito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(98, 98, 98)
+                    .addComponent(lblMontoDepositar)
+                    .addComponent(txtMonto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(114, 114, 114)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnConfirmar)
-                    .addComponent(btnCancelar)
-                    .addComponent(jButton3))
-                .addGap(33, 33, 33)
-                .addComponent(lblMensaje))
+                    .addComponent(btnCancelar))
+                .addGap(18, 18, 18)
+                .addComponent(lblStatus))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtMontoDepositoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMontoDepositoActionPerformed
+    private void txtMontoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMontoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtMontoDepositoActionPerformed
+    }//GEN-LAST:event_txtMontoActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+        try {
+            double monto = Double.parseDouble(txtMonto.getText().trim());
+            Deposito tx = new Deposito(cuentaActual, monto);
+            tx.ejecutar();
+            JOptionPane.showMessageDialog(this, "Depósito exitoso");
+            new ComprobantePanel(cuentaActual, bs).setVisible(true);
+            this.dispose();
+
+        } catch (NumberFormatException nfe) {
+            lblStatus.setText("Monto inválido");
+        } catch (Exception ex) {
+            lblStatus.setText("Error: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnConfirmarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        new MenuPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -189,18 +209,17 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new DepositoPanel().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new DepositoPanel().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblImagen;
-    private javax.swing.JLabel lblMensaje;
-    private javax.swing.JTextField txtMontoDeposito;
+    private javax.swing.JLabel lblMontoDepositar;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextField txtMonto;
     // End of variables declaration//GEN-END:variables
 }
