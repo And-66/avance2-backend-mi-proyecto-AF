@@ -9,25 +9,32 @@ package ui;
  *
  * @author XPC
  */
-import javax.swing.ImageIcon;
+import exception.AutenticacionException;
+import javax.swing.*;
 import java.awt.Image;
+import model.Cuenta;
+import service.BancoService;
+import exception.CuentaNoEncontradaException;
+
 public class LoginPanel extends javax.swing.JFrame {
-    
+    private static final int MAX_FAILED_ATTEMPTS = 3;
+    private int failedAttempts = 0;
+    private long lockExpirationTime = 0;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginPanel.class.getName());
+    private BancoService bs;
 
     /**
      * Creates new form InicioSesionForm
      */
-    public LoginPanel() {
+    public LoginPanel(BancoService bs) {
+        this.bs = bs;
         initComponents();
-// Suponiendo que el JLabel se llama lblImagen.
-ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
-// Obtener la Imagen original
-Image image = icon.getImage();
-// Escalar la imagen a las dimensiones deseadas (ejemplo: 50 px x 50 px)
-Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-// Actualizar el icono del JLabel con la imagen escalada
-lblImagen.setIcon(new ImageIcon(scaledImage));
+        setLocationRelativeTo(null);
+        txtPIN.setInputVerifier(new util.VerificarPIN());
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        lblLogoFideBank.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
@@ -39,73 +46,71 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        lblMensaje = new javax.swing.JLabel();
+        lblTitulo = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jPasswordField1 = new javax.swing.JPasswordField();
-        txtNumCuenta = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
-        txtRegistrarse = new javax.swing.JButton();
+        lblNumeroDeCuenta = new javax.swing.JLabel();
+        lblPIN = new javax.swing.JLabel();
+        txtPIN = new javax.swing.JPasswordField();
+        txtCuenta = new javax.swing.JTextField();
+        btnIngresar = new javax.swing.JButton();
+        btnCrear = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        lblImagen = new javax.swing.JLabel();
+        lblLogoFideBank = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cajero Automatico FideBank");
         setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Bienvenido a FideBank");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTitulo.setText("Bienvenido a FideBank");
 
-        lblMensaje.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        lblMensaje.setForeground(new java.awt.Color(204, 0, 0));
-        lblMensaje.setText("Mensajes y errores aqui");
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(204, 0, 0));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setText("Número de Cuenta:");
+        lblNumeroDeCuenta.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblNumeroDeCuenta.setText("Número de Cuenta:");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setText("PIN:");
+        lblPIN.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblPIN.setText("PIN:");
 
-        jPasswordField1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jPasswordField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jPasswordField1.setText("8745");
-        jPasswordField1.setName("jPasswordField1"); // NOI18N
-        jPasswordField1.addActionListener(new java.awt.event.ActionListener() {
+        txtPIN.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        txtPIN.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtPIN.setName("txtPIN"); // NOI18N
+        txtPIN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordField1ActionPerformed(evt);
+                txtPINActionPerformed(evt);
             }
         });
 
-        txtNumCuenta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        txtNumCuenta.setText("1-5896586-847");
-        txtNumCuenta.setName("txtNumCuenta"); // NOI18N
-        txtNumCuenta.addActionListener(new java.awt.event.ActionListener() {
+        txtCuenta.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        txtCuenta.setName("txtCuenta"); // NOI18N
+        txtCuenta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNumCuentaActionPerformed(evt);
+                txtCuentaActionPerformed(evt);
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(102, 153, 0));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton2.setText("Ingresar");
-        jButton2.setBorder(null);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnIngresar.setBackground(new java.awt.Color(102, 153, 0));
+        btnIngresar.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnIngresar.setText("Ingresar");
+        btnIngresar.setBorder(null);
+        btnIngresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnIngresarActionPerformed(evt);
             }
         });
 
-        txtRegistrarse.setBackground(new java.awt.Color(0, 102, 204));
-        txtRegistrarse.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        txtRegistrarse.setText("Crear cuenta");
-        txtRegistrarse.setBorder(null);
-        txtRegistrarse.setVerifyInputWhenFocusTarget(false);
-        txtRegistrarse.addActionListener(new java.awt.event.ActionListener() {
+        btnCrear.setBackground(new java.awt.Color(0, 102, 204));
+        btnCrear.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCrear.setText("Crear cuenta");
+        btnCrear.setBorder(null);
+        btnCrear.setVerifyInputWhenFocusTarget(false);
+        btnCrear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRegistrarseActionPerformed(evt);
+                btnCrearActionPerformed(evt);
             }
         });
 
@@ -116,38 +121,38 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2)
-                    .addComponent(txtNumCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNumeroDeCuenta)
+                    .addComponent(txtCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblPIN)
+                    .addComponent(txtPIN, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtRegistrarse, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(lblNumeroDeCuenta)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtNumCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3)
+                .addComponent(lblPIN)
                 .addGap(18, 18, 18)
-                .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtPIN, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtRegistrarse, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnIngresar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         jPanel2.setBackground(new java.awt.Color(102, 153, 0));
 
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
-        lblImagen.setName("lblImagen"); // NOI18N
+        lblLogoFideBank.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
+        lblLogoFideBank.setName("lblLogoFideBank"); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -155,14 +160,14 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblLogoFideBank, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(29, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(329, Short.MAX_VALUE)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblLogoFideBank, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
 
@@ -174,68 +179,100 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(69, 69, 69)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
+                    .addComponent(lblTitulo)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(21, 21, 21)
-                        .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addComponent(jLabel1)
+                .addComponent(lblTitulo)
                 .addGap(40, 40, 40)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21)
-                .addComponent(lblMensaje))
+                .addComponent(lblStatus))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtNumCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNumCuentaActionPerformed
+    private void txtCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCuentaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtNumCuentaActionPerformed
+    }//GEN-LAST:event_txtCuentaActionPerformed
 
-    private void txtRegistrarseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRegistrarseActionPerformed
-        // TODO add your handling code here:
-    String numCuenta = txtNumCuenta.getText().trim();
-    String pin = new String(jPasswordField1.getPassword()).trim();
-
-    // Validaciones básicas
-    if(numCuenta.isEmpty() || pin.isEmpty()){
-        lblMensaje.setText("Debe completar todos los campos.");
-        return;
-    }
-    if(pin.length() != 4 || !pin.matches("\\d+")){
-        lblMensaje.setText("El PIN debe ser numérico de 4 dígitos.");
-        return;
-    }
-
-    // Aquí puedes simular la autenticación contra datos almacenados
-    // Por ejemplo, si la número de cuenta es "12345" y PIN es "1234" se acepta.
-    if(numCuenta.equals("12345") && pin.equals("1234")){
-        lblMensaje.setText("Acceso correcto.");
-        // Abrir el dashboard o cerrar el login y mostrar el siguiente formulario
-        LoginPanel dashboard = new LoginPanel();
-        dashboard.setVisible(true);
+    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
+        this.setVisible(false);
+        new RegistroPanel(bs).setVisible(true);
         this.dispose();
-    } else {
-        lblMensaje.setText("Credenciales inválidas. Verifica e intenta nuevamente.");
-    }                                             
-    }//GEN-LAST:event_txtRegistrarseActionPerformed
+    }//GEN-LAST:event_btnCrearActionPerformed
 
-    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+    private void txtPINActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPINActionPerformed
   
-    }//GEN-LAST:event_jPasswordField1ActionPerformed
+    }//GEN-LAST:event_txtPINActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
+         lblStatus.setText("");
+
+        long now = System.currentTimeMillis();
+        if (now < lockExpirationTime) {
+            long secondsLeft = (lockExpirationTime - now) / 1000;
+            lblStatus.setText("Cuenta bloqueada. Intente en " + secondsLeft + "s");
+            return;
+        }
+        if (failedAttempts >= MAX_FAILED_ATTEMPTS &&
+            now >= lockExpirationTime) {
+            failedAttempts = 0;
+        }
+
+        String num = txtCuenta.getText().trim();
+        String pin = new String(txtPIN.getPassword()).trim();
+
+        if (num.isEmpty() || pin.length() != 4) {
+            lblStatus.setText("Cuenta y PIN (4 dígitos) son obligatorios");
+            limpiarYPreparaFocus();
+            return;
+        }
+
+        try {
+            Cuenta cuenta = bs.getBanco().buscarCuenta(num);
+            if (!cuenta.validarPIN(pin)) {
+                throw new AutenticacionException("PIN incorrecto");
+            }
+            new MenuPanel(cuenta, bs).setVisible(true);
+            this.dispose();
+
+        } catch (CuentaNoEncontradaException | AutenticacionException ex) {
+            failedAttempts++;
+            if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
+                lockExpirationTime = now + 30_000;
+                lblStatus.setText("Cuenta bloqueada. Intente en 30s");
+            } else {
+                lblStatus.setText(
+                    "Credenciales inválidas. Intento " +
+                    failedAttempts + " de " + MAX_FAILED_ATTEMPTS
+                );
+            }
+            limpiarYPreparaFocus();
+
+        } catch (Exception ex) {
+            lblStatus.setText("Error inesperado");
+            limpiarYPreparaFocus();
+        }
+
+}
+
+    private void limpiarYPreparaFocus() {
+        txtCuenta.setText("");
+        txtPIN.setText("");
+        txtCuenta.requestFocusInWindow();
+
+    }//GEN-LAST:event_btnIngresarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -259,20 +296,20 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new LoginPanel().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new LoginPanel().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JButton btnCrear;
+    private javax.swing.JButton btnIngresar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JLabel lblImagen;
-    private javax.swing.JLabel lblMensaje;
-    private javax.swing.JTextField txtNumCuenta;
-    private javax.swing.JButton txtRegistrarse;
+    private javax.swing.JLabel lblLogoFideBank;
+    private javax.swing.JLabel lblNumeroDeCuenta;
+    private javax.swing.JLabel lblPIN;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextField txtCuenta;
+    private javax.swing.JPasswordField txtPIN;
     // End of variables declaration//GEN-END:variables
 }
