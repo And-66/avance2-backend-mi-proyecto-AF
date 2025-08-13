@@ -12,10 +12,10 @@ import java.util.Date;
  * @author XPC
  */
 public class Deposito extends Transaccion {
-    private Cuenta cuentaDestino;
+    private Cuenta cuentaOrigen;
     
     public Deposito(Cuenta cuentaDestino, double monto) { 
-        this.cuentaDestino = cuentaDestino;
+        this.cuentaOrigen = cuentaDestino;
         this.monto = monto;
         this.tipo = EnumTipo.DEPOSITO;
         this.fecha = new Date();    
@@ -24,8 +24,8 @@ public class Deposito extends Transaccion {
     
     @Override
     public void ejecutar() { 
-        cuentaDestino.depositar(monto);
+        cuentaOrigen.depositar(monto);
         this.estado = "Exitosa";
-        registrar();    
+        cuentaOrigen.getHistorialTransacciones().add(this);  
     }
 }

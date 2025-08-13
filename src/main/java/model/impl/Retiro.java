@@ -24,9 +24,14 @@ public class Retiro extends Transaccion {
     
     @Override
     public void ejecutar() throws FondosInsuficientesException { 
+        if (cuentaOrigen.getBalance()< monto) {
+            this.estado = "Fallida";
+            throw new FondosInsuficientesException("Saldo insuficiente");
+        }
         cuentaOrigen.retirar(monto);
         this.estado = "Exitosa";
-        registrar();
+        cuentaOrigen.getHistorialTransacciones().add(this);
+
     
     }
 }

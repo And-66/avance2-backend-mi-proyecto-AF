@@ -27,8 +27,15 @@ public class Transferencia extends Transaccion {
     
     @Override
     public void ejecutar() throws FondosInsuficientesException {
-        cuentaOrigen.transferir(monto, cuentaDestino);
+        if (cuentaOrigen.getBalance()< monto) {
+            this.estado = "Fallida";
+            throw new FondosInsuficientesException("Saldo insuficiente");
+        }
+        cuentaOrigen.retirar(monto);
+        cuentaDestino.depositar(monto);
         this.estado = "Exitosa";
-        registrar();   
+        cuentaOrigen.getHistorialTransacciones().add(this);
+        cuentaDestino.getHistorialTransacciones().add(this);
+
     }
 }

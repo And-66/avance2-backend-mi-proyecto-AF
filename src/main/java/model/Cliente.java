@@ -78,10 +78,6 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
-    
-    
-    
-    
     public void registrarCliente() {
         validarCampos();
     }
