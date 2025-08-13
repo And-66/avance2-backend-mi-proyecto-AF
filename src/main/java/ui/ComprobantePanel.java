@@ -3,6 +3,11 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import model.Cuenta;
+import model.Transaccion;
+import model.Comprobante;
+import service.BancoService;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -14,22 +19,22 @@ import javax.swing.ImageIcon;
  * @author XPC
  */
 public class ComprobantePanel extends javax.swing.JFrame {
-    
+    private Cuenta cuentaActual;
+    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ComprobantePanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public ComprobantePanel() {
+    public ComprobantePanel(Cuenta cuentaActual, BancoService bs) {
+        this.cuentaActual = cuentaActual;
+        this.bs = bs;
         initComponents();
-                // Suponiendo que el JLabel se llama lblImagen.
-ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
-// Obtener la Imagen original
-Image image = icon.getImage();
-// Escalar la imagen a las dimensiones deseadas (ejemplo: 50 px x 50 px)
-Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-// Actualizar el icono del JLabel con la imagen escalada
-lblImagen.setIcon(new ImageIcon(scaledImage));
+        setLocationRelativeTo(null);
+        ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
+        Image image = icon.getImage();
+        Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+        lblFideBankLogo.setIcon(new ImageIcon(scaledImage));
     }
 
     /**
@@ -41,39 +46,55 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        btnImprimirComprobante = new javax.swing.JButton();
+        lblTitulo = new javax.swing.JLabel();
+        btnImprimir = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtDetalle = new javax.swing.JTextArea();
         jPanel2 = new javax.swing.JPanel();
-        lblImagen = new javax.swing.JLabel();
-        lblMensaje = new javax.swing.JLabel();
+        lblFideBankLogo = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Comprobante de Transacción");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Comprobante de Transacción");
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblTitulo.setText("Comprobante de Transacción");
 
-        btnImprimirComprobante.setBackground(new java.awt.Color(102, 153, 0));
-        btnImprimirComprobante.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        btnImprimirComprobante.setText("Imprimir");
+        btnImprimir.setBackground(new java.awt.Color(102, 153, 0));
+        btnImprimir.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnImprimir.setText("Imprimir");
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setBackground(new java.awt.Color(102, 153, 0));
         btnCancelar.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnCancelar.setText("Cerrar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("Tipo:\nMonto:\nFecha:\nEstado:");
-        jScrollPane1.setViewportView(jTextArea1);
+        txtDetalle.setEditable(false);
+        txtDetalle.setColumns(20);
+        txtDetalle.setRows(5);
+        txtDetalle.setText("Tipo:\nMonto:\nFecha:\nEstado:");
+        jScrollPane1.setViewportView(txtDetalle);
 
         jPanel2.setBackground(new java.awt.Color(102, 153, 0));
 
-        lblImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
-        lblImagen.setName("lblImagen"); // NOI18N
+        lblFideBankLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/IconoFideBank.png"))); // NOI18N
+        lblFideBankLogo.setName("lblFideBankLogo"); // NOI18N
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -81,20 +102,19 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(22, 22, 22)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblFideBankLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(28, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(329, Short.MAX_VALUE)
-                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblFideBankLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19))
         );
 
-        lblMensaje.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
-        lblMensaje.setForeground(new java.awt.Color(204, 0, 51));
-        lblMensaje.setText("Mensajes y errores aqui");
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 2, 14)); // NOI18N
+        lblStatus.setForeground(new java.awt.Color(204, 0, 51));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -106,35 +126,68 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(44, 44, 44)
-                        .addComponent(jLabel1))
+                        .addComponent(lblTitulo))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(86, 86, 86)
-                        .addComponent(btnImprimirComprobante)
+                        .addComponent(btnImprimir)
                         .addGap(4, 4, 4)
                         .addComponent(btnCancelar))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(4, 4, 4)
-                        .addComponent(lblMensaje, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addComponent(jLabel1)
+                .addComponent(lblTitulo)
                 .addGap(16, 16, 16)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnImprimirComprobante)
+                    .addComponent(btnImprimir)
                     .addComponent(btnCancelar))
                 .addGap(20, 20, 20)
-                .addComponent(lblMensaje))
+                .addComponent(lblStatus))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+          
+        var historial = cuentaActual.getHistorialTransacciones();
+        if (historial.isEmpty()) {
+            txtDetalle.setText("No hay transacciones para mostrar.");
+            return;
+        }
+
+        Transaccion tx = historial.get(historial.size() - 1);
+
+        Comprobante comp = new Comprobante((int)(System.currentTimeMillis() % Integer.MAX_VALUE));
+        comp.generar(tx);
+
+        txtDetalle.setText(comp.getDetallesTransaccion());
+    }//GEN-LAST:event_formWindowOpened
+
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+
+        JOptionPane.showMessageDialog(
+            this,
+            "Comprobante enviado a la impresora.",
+            "Impresión",
+            JOptionPane.INFORMATION_MESSAGE
+        );
+
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        new MenuPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -158,17 +211,17 @@ lblImagen.setIcon(new ImageIcon(scaledImage));
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ComprobantePanel().setVisible(true));
+        //java.awt.EventQueue.invokeLater(() -> new ComprobantePanel().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnImprimirComprobante;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JLabel lblImagen;
-    private javax.swing.JLabel lblMensaje;
+    private javax.swing.JLabel lblFideBankLogo;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextArea txtDetalle;
     // End of variables declaration//GEN-END:variables
 }
