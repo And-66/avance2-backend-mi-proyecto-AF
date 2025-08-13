@@ -251,8 +251,8 @@ public class MenuPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnTransferenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferenciaActionPerformed
-        //new TransferenciaPanel(cuentaActual, bs).setVisible(true);
-        //this.dispose();
+        new TransferenciaPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnTransferenciaActionPerformed
 
@@ -263,14 +263,14 @@ public class MenuPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDepositoActionPerformed
 
     private void btnHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialActionPerformed
-        //new HistorialPanel(cuentaActual, bs).setVisible(true);
-        //this.dispose();
+        new HistorialPanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnHistorialActionPerformed
 
     private void btnComprobanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprobanteActionPerformed
-        //new ComprobantePanel(cuentaActual, bs).setVisible(true);
-        //this.dispose();
+        new ComprobantePanel(cuentaActual, bs).setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_btnComprobanteActionPerformed
 
