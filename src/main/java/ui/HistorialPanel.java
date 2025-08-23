@@ -4,9 +4,6 @@ package ui;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import model.Cuenta;
-import model.Transaccion;
-import service.BancoService;
-import javax.swing.table.DefaultTableModel;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,15 +16,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class HistorialPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HistorialPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public HistorialPanel(Cuenta cuentaActual, BancoService bs) {
+    public HistorialPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
@@ -188,23 +183,30 @@ public class HistorialPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRefrescarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed
     private void cargarHistorial() {
-        DefaultTableModel model = (DefaultTableModel) tblHistorial.getModel();
+        javax.swing.table.DefaultTableModel model =
+            (javax.swing.table.DefaultTableModel) tblHistorial.getModel();
         model.setRowCount(0);
 
-        for (Transaccion tx : cuentaActual.getHistorialTransacciones()) {
+        var svc = service.Services.service();
+        java.util.List<Object[]> filas = svc.listarHistorialBasico(cuentaActual.getNumCuenta());
+
+
+        for (Object[] r : filas) {
+            java.sql.Timestamp fecha = (java.sql.Timestamp) r[0];
             model.addRow(new Object[]{
-                tx.getFecha(),
-                tx.getTipo(),
-                tx.getMonto(),
-                tx.getEstado()
+                fecha,                 // fecha
+                r[1],                  // EnumTipo
+                r[2],                  // monto (BigDecimal)
+                r[3]                   // estado
             });
         }
     }
+
 
     /**
      * @param args the command line arguments

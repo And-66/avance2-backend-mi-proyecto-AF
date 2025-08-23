@@ -3,11 +3,9 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import model.Cuenta;
-import model.Transaccion;
-import model.Comprobante;
-import service.BancoService;
 import javax.swing.JOptionPane;
+import model.Comprobante;
+import model.Cuenta;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -20,15 +18,13 @@ import javax.swing.JOptionPane;
  */
 public class ComprobantePanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ComprobantePanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public ComprobantePanel(Cuenta cuentaActual, BancoService bs) {
+    public ComprobantePanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
@@ -156,20 +152,39 @@ public class ComprobantePanel extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-          
-        var historial = cuentaActual.getHistorialTransacciones();
-        if (historial.isEmpty()) {
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {                                  
+//GEN-FIRST:event_formWindowOpened
+        var svc = service.Services.service();
+        Object[] row = svc.ultimaTransaccionBasica(cuentaActual.getNumCuenta());
+
+        if (row == null) {
             txtDetalle.setText("No hay transacciones para mostrar.");
             return;
         }
 
-        Transaccion tx = historial.get(historial.size() - 1);
+        long idTx = (long) row[0];
+        java.util.Date fecha = new java.util.Date(((java.sql.Timestamp) row[1]).getTime());
+        model.EnumTipo tipo = (model.EnumTipo) row[2];
+        java.math.BigDecimal monto = (java.math.BigDecimal) row[3];
+        String estado = (String) row[4];
+
+        model.Transaccion tx;
+        switch (tipo) {
+            case DEPOSITO -> tx = new model.impl.Deposito(cuentaActual, 0);
+            case RETIRO -> tx = new model.impl.Retiro(cuentaActual, 0);
+            case TRANSFERENCIA -> tx = new model.impl.Transferencia(cuentaActual, cuentaActual, 0);
+            default -> throw new IllegalStateException("Tipo no soportado");
+        }
+        tx.setIdTransaccion((int) (idTx % Integer.MAX_VALUE));
+        tx.setFecha(fecha);
+        tx.setMonto(monto.doubleValue());
+        tx.setEstado(estado);
+        tx.setTipo(tipo);
 
         Comprobante comp = new Comprobante((int)(System.currentTimeMillis() % Integer.MAX_VALUE));
-        comp.generar(tx);
-
-        txtDetalle.setText(comp.getDetallesTransaccion());
+        String detalle = comp.generar(tx, cuentaActual.getNumCuenta());
+        txtDetalle.setText(detalle);
+                                     
     }//GEN-LAST:event_formWindowOpened
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
@@ -184,7 +199,7 @@ public class ComprobantePanel extends javax.swing.JFrame {
     }//GEN-LAST:event_btnImprimirActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed

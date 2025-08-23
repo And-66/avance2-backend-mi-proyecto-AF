@@ -9,25 +9,19 @@ package ui;
  *
  * @author XPC
  */
-import exception.AutenticacionException;
-import javax.swing.*;
 import java.awt.Image;
-import model.Cuenta;
-import service.BancoService;
-import exception.CuentaNoEncontradaException;
+import javax.swing.*;
 
 public class LoginPanel extends javax.swing.JFrame {
     private static final int MAX_FAILED_ATTEMPTS = 3;
     private int failedAttempts = 0;
     private long lockExpirationTime = 0;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginPanel.class.getName());
-    private BancoService bs;
 
     /**
      * Creates new form InicioSesionForm
      */
-    public LoginPanel(BancoService bs) {
-        this.bs = bs;
+    public LoginPanel() {
         initComponents();
         setLocationRelativeTo(null);
         txtPIN.setInputVerifier(new util.VerificarPIN());
@@ -208,7 +202,7 @@ public class LoginPanel extends javax.swing.JFrame {
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
         this.setVisible(false);
-        new RegistroPanel(bs).setVisible(true);
+        new RegistroPanel().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCrearActionPerformed
 
@@ -216,8 +210,9 @@ public class LoginPanel extends javax.swing.JFrame {
   
     }//GEN-LAST:event_txtPINActionPerformed
 
-    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIngresarActionPerformed
-         lblStatus.setText("");
+    private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt) {                                            
+//GEN-FIRST:event_btnIngresarActionPerformed
+        lblStatus.setText("");
 
         long now = System.currentTimeMillis();
         if (now < lockExpirationTime) {
@@ -225,55 +220,51 @@ public class LoginPanel extends javax.swing.JFrame {
             lblStatus.setText("Cuenta bloqueada. Intente en " + secondsLeft + "s");
             return;
         }
-        if (failedAttempts >= MAX_FAILED_ATTEMPTS &&
-            now >= lockExpirationTime) {
+        if (failedAttempts >= MAX_FAILED_ATTEMPTS && now >= lockExpirationTime) {
             failedAttempts = 0;
         }
 
         String num = txtCuenta.getText().trim();
         String pin = new String(txtPIN.getPassword()).trim();
 
-        if (num.isEmpty() || pin.length() != 4) {
-            lblStatus.setText("Cuenta y PIN (4 dígitos) son obligatorios");
+        if (num.isEmpty() || pin.isEmpty()) {
+            lblStatus.setText("Ingrese cuenta y PIN");
             limpiarYPreparaFocus();
             return;
         }
 
         try {
-            Cuenta cuenta = bs.getBanco().buscarCuenta(num);
-            if (!cuenta.validarPIN(pin)) {
-                throw new AutenticacionException("PIN incorrecto");
-            }
-            new MenuPanel(cuenta, bs).setVisible(true);
+            var svc = service.Services.service();
+            model.Cuenta cuenta = svc.loginPorPin(num, pin);
+
+            new MenuPanel(cuenta).setVisible(true);
             this.dispose();
 
-        } catch (CuentaNoEncontradaException | AutenticacionException ex) {
+        } catch (exception.AutenticacionException ex) {
             failedAttempts++;
             if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
                 lockExpirationTime = now + 30_000;
                 lblStatus.setText("Cuenta bloqueada. Intente en 30s");
             } else {
                 lblStatus.setText(
-                    "Credenciales inválidas. Intento " +
-                    failedAttempts + " de " + MAX_FAILED_ATTEMPTS
+                    "Credenciales inválidas. Intento " + failedAttempts + " de " + MAX_FAILED_ATTEMPTS
                 );
             }
             limpiarYPreparaFocus();
-
         } catch (Exception ex) {
             lblStatus.setText("Error inesperado");
             limpiarYPreparaFocus();
         }
-
-}
-
-    private void limpiarYPreparaFocus() {
-        txtCuenta.setText("");
-        txtPIN.setText("");
-        txtCuenta.requestFocusInWindow();
+                                           
 
     }//GEN-LAST:event_btnIngresarActionPerformed
 
+    private void limpiarYPreparaFocus() {
+    txtCuenta.setText("");
+    txtPIN.setText("");
+    txtCuenta.requestFocus();
+    }
+    
     /**
      * @param args the command line arguments
      */

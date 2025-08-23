@@ -5,8 +5,6 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Cuenta;
-import model.impl.Deposito;
-import service.BancoService;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,15 +17,13 @@ import service.BancoService;
  */
 public class DepositoPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(DepositoPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public DepositoPanel(Cuenta cuentaActual, BancoService bs) {
+    public DepositoPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         txtMonto.setInputVerifier(new util.VerificarNum());
@@ -165,13 +161,15 @@ public class DepositoPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMontoActionPerformed
 
-    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {                                             
+//GEN-FIRST:event_btnConfirmarActionPerformed
         try {
-            double monto = Double.parseDouble(txtMonto.getText().trim());
-            Deposito tx = new Deposito(cuentaActual, monto);
-            tx.ejecutar();
+            double m = Double.parseDouble(txtMonto.getText().trim());
+            var svc = service.Services.service();
+            var nuevo = svc.depositar(cuentaActual.getNumCuenta(), java.math.BigDecimal.valueOf(m));
+            cuentaActual.setBalance(nuevo.doubleValue());
             JOptionPane.showMessageDialog(this, "Depósito exitoso");
-            new ComprobantePanel(cuentaActual, bs).setVisible(true);
+            new ComprobantePanel(cuentaActual).setVisible(true);
             this.dispose();
 
         } catch (NumberFormatException nfe) {
@@ -179,10 +177,12 @@ public class DepositoPanel extends javax.swing.JFrame {
         } catch (Exception ex) {
             lblStatus.setText("Error: " + ex.getMessage());
         }
+                                                    
+
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed

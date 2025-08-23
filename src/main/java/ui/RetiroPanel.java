@@ -3,11 +3,8 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import model.Cuenta;
-import model.impl.Retiro;
-import exception.FondosInsuficientesException;
-import service.BancoService;
 import javax.swing.JOptionPane;
+import model.Cuenta;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -20,15 +17,13 @@ import javax.swing.JOptionPane;
  */
 public class RetiroPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RetiroPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public RetiroPanel(Cuenta cuentaActual, BancoService bs) {
+    public RetiroPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         txtMonto.setInputVerifier(new util.VerificarNum());
@@ -167,26 +162,30 @@ public class RetiroPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMontoActionPerformed
 
-    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {                                             
+//GEN-FIRST:event_btnConfirmarActionPerformed
         try {
-            double monto = Double.parseDouble(txtMonto.getText().trim());
-            Retiro tx = new Retiro(cuentaActual, monto);
-            tx.ejecutar();
+            double m = Double.parseDouble(txtMonto.getText().trim());
+            var svc = service.Services.service();
+            var nuevo = svc.retirar(cuentaActual.getNumCuenta(), java.math.BigDecimal.valueOf(m));
+            cuentaActual.setBalance(nuevo.doubleValue());
             JOptionPane.showMessageDialog(this, "Retiro exitoso");
-            new ComprobantePanel(cuentaActual, bs).setVisible(true);
+            new ComprobantePanel(cuentaActual).setVisible(true);
             this.dispose();
 
         } catch (NumberFormatException nfe) {
             lblStatus.setText("Monto inválido");
-        } catch (FondosInsuficientesException fie) {
+        } catch (exception.FondosInsuficientesException fie) {
             lblStatus.setText("Fondos insuficientes");
         } catch (Exception ex) {
             lblStatus.setText("Error: " + ex.getMessage());
         }
+                                                    
+
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed

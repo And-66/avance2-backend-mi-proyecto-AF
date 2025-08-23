@@ -4,7 +4,6 @@ package ui;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import model.Cuenta;
-import service.BancoService;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -16,22 +15,52 @@ import service.BancoService;
  */
 public class MenuPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MenuPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public MenuPanel(Cuenta cuentaActual, BancoService bs) {
+    public MenuPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
+        refrescarSaldo();
+        java.awt.Window window = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (window != null) {
+            window.addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+                @Override public void windowGainedFocus(java.awt.event.WindowEvent e) { refrescarSaldo(); }
+                @Override public void windowLostFocus(java.awt.event.WindowEvent e) {}
+            });
+        } else {
+            addHierarchyListener(ev -> {
+                if ((ev.getChangeFlags() & java.awt.event.HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                    java.awt.Window w = javax.swing.SwingUtilities.getWindowAncestor(MenuPanel.this);
+                    if (w != null) {
+                        w.addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+                            @Override public void windowGainedFocus(java.awt.event.WindowEvent e) { refrescarSaldo(); }
+                            @Override public void windowLostFocus(java.awt.event.WindowEvent e) {}
+                        });
+                    }
+                }
+            });
+        }
+        
         setLocationRelativeTo(null);
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
         Image image = icon.getImage();
         Image scaledImage = image.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         lblImagenFideBank.setIcon(new ImageIcon(scaledImage));
     }
+    
+    private void refrescarSaldo() {
+     try {
+         var svc = service.Services.service();
+         var nuevo = svc.consultarSaldo(cuentaActual.getNumCuenta());
+         cuentaActual.setBalance(nuevo.doubleValue());
+         lblSaldo.setText(String.format("Saldo: ₡%,.2f", cuentaActual.getBalance()));
+     } catch (Exception ex) {
+         System.err.println("No se pudo refrescar saldo: " + ex.getMessage());
+     }
+ }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -225,13 +254,13 @@ public class MenuPanel extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRetiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetiroActionPerformed
-        new RetiroPanel(cuentaActual, bs).setVisible(true);
+        new RetiroPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnRetiroActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        new ActualizarDatosPanel(cuentaActual, bs).setVisible(true);
+        new ActualizarDatosPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnActualizarActionPerformed
@@ -251,31 +280,30 @@ public class MenuPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void btnTransferenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferenciaActionPerformed
-        new TransferenciaPanel(cuentaActual, bs).setVisible(true);
+        new TransferenciaPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnTransferenciaActionPerformed
 
     private void btnDepositoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDepositoActionPerformed
-        new DepositoPanel(cuentaActual, bs).setVisible(true);
+        new DepositoPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnDepositoActionPerformed
 
     private void btnHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialActionPerformed
-        new HistorialPanel(cuentaActual, bs).setVisible(true);
+        new HistorialPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnHistorialActionPerformed
 
     private void btnComprobanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnComprobanteActionPerformed
-        new ComprobantePanel(cuentaActual, bs).setVisible(true);
+        new ComprobantePanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnComprobanteActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        bs.guardar();
         System.exit(0);
 
     }//GEN-LAST:event_btnSalirActionPerformed

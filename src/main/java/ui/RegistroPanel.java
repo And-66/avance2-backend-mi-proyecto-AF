@@ -6,7 +6,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import model.Cliente;
 import model.Cuenta;
-import service.BancoService;
 import util.VerificarEmail;
 import util.VerificarNum;
 import util.VerificarPIN;
@@ -21,14 +20,13 @@ import util.VerificarPIN;
  * @author XPC
  */
 public class RegistroPanel extends javax.swing.JFrame {
-    private BancoService bs;
+    private model.Cuenta cuentaActual;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(RegistroPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public RegistroPanel(BancoService bs) {
-        this.bs = bs;
+    public RegistroPanel() {
         initComponents();
         setLocationRelativeTo(null);
         txtPIN.setInputVerifier(new util.VerificarPIN());
@@ -325,24 +323,18 @@ public class RegistroPanel extends javax.swing.JFrame {
         }
 
         try {
-            int id = bs.getBanco().getListaClientes().size() + 1;
-            Cliente cliente = new Cliente(
-                id, nombre, apellido,
-                direccion, telefono, email
-            );
+            Cliente cliente = new Cliente(0, nombre, apellido, direccion, telefono, email);
             cliente.registrarCliente();
-
-            String numCuenta = String.valueOf(System.currentTimeMillis());
-            Cuenta cuenta = new Cuenta(numCuenta, cliente, pin, 0.0);
-            bs.getBanco().abrirCuenta(cliente, cuenta);
+            var svc = service.Services.service();
+            Cuenta cuenta = svc.abrirCuenta(cliente, pin);
 
             JOptionPane.showMessageDialog(
                 this,
-                "Registro exitoso. Tu cuenta es: " + numCuenta,
+                "Registro exitoso. Tu cuenta es: " + cuenta.getNumCuenta(),
                 "Registro OK",
                 JOptionPane.INFORMATION_MESSAGE
             );
-            new MenuPanel(cuenta, bs).setVisible(true);
+            new MenuPanel(cuenta).setVisible(true);
             this.dispose();
 
         } catch (Exception ex) {
@@ -352,7 +344,7 @@ public class RegistroPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistroActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new LoginPanel(bs).setVisible(true);
+        new LoginPanel().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 

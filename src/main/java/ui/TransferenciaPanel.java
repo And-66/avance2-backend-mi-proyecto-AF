@@ -3,12 +3,8 @@ package ui;
 
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import model.Cuenta;
-import model.impl.Transferencia;
-import exception.FondosInsuficientesException;
-import exception.CuentaNoEncontradaException;
-import service.BancoService;
 import javax.swing.JOptionPane;
+import model.Cuenta;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -21,15 +17,13 @@ import javax.swing.JOptionPane;
  */
 public class TransferenciaPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TransferenciaPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public TransferenciaPanel(Cuenta cuentaActual, BancoService bs) {
+    public TransferenciaPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         txtCuentaDestino.setInputVerifier(new util.VerificarNum());
@@ -199,37 +193,42 @@ public class TransferenciaPanel extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtMontoActionPerformed
 
-    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {                                             
+//GEN-FIRST:event_btnConfirmarActionPerformed
         try {
             String numDestino = txtCuentaDestino.getText().trim();
             double monto      = Double.parseDouble(txtMonto.getText().trim());
-            Cuenta cuentaDest = bs.getBanco().buscarCuenta(numDestino);
-            Transferencia tx = new Transferencia(cuentaActual, cuentaDest, monto);
-            tx.ejecutar();
-            String mensaje = String.format(
-            "Transferencia exitosa.%n" +
-            "Cuenta destino: %s%n" +
-            "Monto transferido: ₡%,.2f",
-            numDestino,
-            monto
-            );
-            JOptionPane.showMessageDialog(this,mensaje,"Transferencia OK",JOptionPane.INFORMATION_MESSAGE);
-            new ComprobantePanel(cuentaActual, bs).setVisible(true);
-            this.dispose();
-        } catch (NumberFormatException nfe) {
-            lblStatus.setText("Formato de monto inválido");
-        } catch (CuentaNoEncontradaException cnfe) {
-            lblStatus.setText("Cuenta destino no encontrada");
-        } catch (FondosInsuficientesException fie) {
-            lblStatus.setText("Saldo insuficiente para transferir");
-        } catch (Exception ex) {
-            lblStatus.setText("Error: " + ex.getMessage());
-        }
+            
+            if (numDestino.equals(cuentaActual.getNumCuenta())) {
+                lblStatus.setText("No puedes transferir a la misma cuenta.");
+                return;
+            }
 
+            var svc = service.Services.service();
+            var nuevo = svc.transferir(cuentaActual.getNumCuenta(), numDestino, java.math.BigDecimal.valueOf(monto));
+            cuentaActual.setBalance(nuevo.doubleValue());
+
+            String mensaje = String.format(
+                "Transferencia exitosa.%nCuenta destino: %s%nMonto transferido: ₡%,.2f",
+                numDestino, monto
+            );
+            JOptionPane.showMessageDialog(this, mensaje, "Transferencia OK",
+                                          JOptionPane.INFORMATION_MESSAGE);
+            new ComprobantePanel(cuentaActual).setVisible(true);
+            this.dispose();
+
+        } catch (NumberFormatException nfe) {
+            lblStatus.setText("Monto inválido");
+        } catch (exception.FondosInsuficientesException fie) {
+            lblStatus.setText(fie.getMessage());
+        } catch (Exception ex) {
+            lblStatus.setText(ex.getMessage());
+        }
+                                                    
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed

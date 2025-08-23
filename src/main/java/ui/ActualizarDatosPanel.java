@@ -6,12 +6,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import model.Cuenta;
 import model.Cliente;
-import service.BancoService;
+import model.Cuenta;
 import util.VerificarEmail;
 import util.VerificarNum;
 import util.VerificarPIN;
+import service.Services;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -24,15 +24,13 @@ import util.VerificarPIN;
  */
 public class ActualizarDatosPanel extends javax.swing.JFrame {
     private Cuenta cuentaActual;
-    private BancoService bs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ActualizarDatosPanel.class.getName());
 
     /**
      * Creates new form RetiroForm
      */
-    public ActualizarDatosPanel(Cuenta cuentaActual, BancoService bs) {
+    public ActualizarDatosPanel(Cuenta cuentaActual) {
         this.cuentaActual = cuentaActual;
-        this.bs = bs;
         initComponents();
         setLocationRelativeTo(null);
         ImageIcon icon = new ImageIcon(getClass().getResource("/images/IconoFideBank.png"));
@@ -382,14 +380,14 @@ public class ActualizarDatosPanel extends javax.swing.JFrame {
             cl.setEmail(email);
 
             cl.actualizarDatos();
-            bs.getBanco().actualizarCliente(cl);
-            bs.getBanco().actualizarCuenta(cuentaActual);
+            Services.service().actualizarCliente(cl);
+            Services.service().actualizarCuenta(cuentaActual);
 
             JOptionPane.showMessageDialog(this,"Datos actualizados correctamente","Éxito",
             JOptionPane.INFORMATION_MESSAGE
             );
 
-            new MenuPanel(cuentaActual, bs).setVisible(true);
+            new MenuPanel(cuentaActual).setVisible(true);
             this.dispose();
 
         } catch (Exception ex) {
@@ -398,7 +396,7 @@ public class ActualizarDatosPanel extends javax.swing.JFrame {
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        new MenuPanel(cuentaActual, bs).setVisible(true);
+        new MenuPanel(cuentaActual).setVisible(true);
         this.dispose();
 
     }//GEN-LAST:event_btnCancelarActionPerformed
