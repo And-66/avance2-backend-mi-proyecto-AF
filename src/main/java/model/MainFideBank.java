@@ -4,7 +4,6 @@
  */
 package model;
 
-import service.BancoService;
 import ui.LoginPanel;
 
 /**
@@ -17,10 +16,8 @@ public class MainFideBank {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        BancoService bs = new BancoService();
-        Runtime.getRuntime().addShutdownHook(new Thread(bs::guardar));
         java.awt.EventQueue.invokeLater(() -> {
-            new LoginPanel(bs).setVisible(true);
+            new LoginPanel().setVisible(true);
         });
     }
 
