@@ -2,17 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package model;
+package legacy;
 
 import exception.CuentaNoEncontradaException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import model.Cliente;
+import model.Cuenta;
 /**
  *
  * @author XPC
  */
+@Deprecated
 public class Banco implements Serializable {
     private List<Cliente> listaClientes = new ArrayList<>();
     private List<Cuenta> listaCuentas  = new ArrayList<>();

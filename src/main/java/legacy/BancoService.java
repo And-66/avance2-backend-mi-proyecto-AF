@@ -5,7 +5,6 @@
 package legacy;
 
 import legacy.Serializacion;
-import model.Banco;
 import java.io.IOException;
 
 
